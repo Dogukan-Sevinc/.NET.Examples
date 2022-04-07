@@ -1,25 +1,58 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MVC101.Models;
+using MVC101.Services.SmsService;
 using System.Diagnostics;
+using MVC101.Services.EmailService;
 
 namespace MVC101.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
+        private readonly ISmsService _smsService;
+        private readonly IEmailService _emailService;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ISmsService smsService, IEmailService emailService)
         {
-            _logger = logger;
+            _smsService = smsService;
+            _emailService = emailService;
         }
 
         public IActionResult Index()
         {
+            var result = _smsService.Send(new SmsModel()
+            {
+                TelefonNo = "12345",
+                Mesaj = "home/index çalıştı"
+            });
+
+            var wissenSms = (WissenSmsService)_smsService;
+            Debug.WriteLine(wissenSms.EndPoint);
+
+            _emailService.SendMailAsync(new MailModel()
+            {
+                To = new List<EmailModel>()
+                {
+                    new EmailModel()
+                    {
+                        Name = "Wissen",
+                        Adress = "site@wissenakademie.com"
+                    }
+                },
+                Subject = "Index Açıldı",
+                Body = "Bu emailin body kısmıdır"
+            });
+
             return View();
         }
 
         public IActionResult Privacy()
         {
+            var result = _smsService.Send(new SmsModel()
+            {
+                TelefonNo = "12345",
+                Mesaj = "home/index çalıştı"
+            });
+
             return View();
         }
 
