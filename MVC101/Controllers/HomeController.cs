@@ -4,17 +4,19 @@ using MVC101.Services.SmsService;
 using System.Diagnostics;
 using MVC101.Services.EmailService;
 
-namespace MVC101.Controllers
+namespace Mvc101.Controllers
 {
     public class HomeController : Controller
     {
         private readonly ISmsService _smsService;
         private readonly IEmailService _emailService;
+        private readonly IWebHostEnvironment _appEnvironment;
 
-        public HomeController(ISmsService smsService, IEmailService emailService)
+        public HomeController(ISmsService smsService, IEmailService emailService, IWebHostEnvironment appEnvironment)
         {
             _smsService = smsService;
             _emailService = emailService;
+            _appEnvironment = appEnvironment;
         }
 
         public IActionResult Index()
@@ -28,6 +30,8 @@ namespace MVC101.Controllers
             var wissenSms = (WissenSmsService)_smsService;
             Debug.WriteLine(wissenSms.EndPoint);
 
+            var fileStream = new FileStream(@$"{_appEnvironment.WebRootPath}\Files\Jimg.jpg", FileMode.Open);
+
             _emailService.SendMailAsync(new MailModel()
             {
                 To = new List<EmailModel>()
@@ -37,9 +41,13 @@ namespace MVC101.Controllers
                         Name = "Wissen",
                         Adress = "dogukansvnc13@gmail.com"
                     }
-                },
+                },  
                 Subject = "Index Açıldı",
-                Body = "Bu emailin body kısmıdır"
+                Body = "Bu emailin body kısmıdır",
+                Attachs = new List<Stream>()
+                {
+                    fileStream
+                }
             });
 
             return View();

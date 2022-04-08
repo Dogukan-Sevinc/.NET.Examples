@@ -1,16 +1,15 @@
-﻿using System.Net;
-using System.Net.Mail;
-using System.Net.Mime;
-using System.Text;
-using MVC101.Models;
+﻿using MVC101.Models;
 using MVC101.Services.EmailService;
+using System.Net;
+using System.Net.Mail;
+using System.Text;
 
 namespace Mvc101.Services.EmailService
 {
     public class OutlookEmailService : IEmailService
     {
-        public string SenderMail => "wissen.akademie@outlook.com";
-        public string Password => "123456789123456789abc";
+        public string SenderMail => "blacbod@hotmail.com";
+        public string Password => "burak.61";
         public string Smtp => "smtp-mail.outlook.com";
         public int SmtpPort => 587;
 
@@ -33,10 +32,13 @@ namespace Mvc101.Services.EmailService
             }
 
             if (model.Attachs is { Count: > 0 })
-            {   
+            {
                 foreach (var attach in model.Attachs)
                 {
-                    //mail.Attachments.Add(new Attachment(attach));
+                    var fileStream = attach as FileStream;
+                    var info = new FileInfo(fileStream.Name);
+
+                    mail.Attachments.Add(new Attachment(attach, info.Name));
                 }
             }
 
