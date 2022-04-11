@@ -1,7 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MVC101.Models;
-using MVC101.Services.SmsService;
 using System.Diagnostics;
+using Mvc101.Services.EmailService;
+using MVC101.Services.SmsService;
 using MVC101.Services.EmailService;
 
 namespace Mvc101.Controllers
@@ -11,15 +12,20 @@ namespace Mvc101.Controllers
         private readonly ISmsService _smsService;
         private readonly IEmailService _emailService;
         private readonly IWebHostEnvironment _appEnvironment;
+        private readonly IServiceProvider _serviceProvider;
 
-        public HomeController(ISmsService smsService, IEmailService emailService, IWebHostEnvironment appEnvironment)
+        public HomeController(ISmsService smsService,
+            IEmailService emailService,
+            IWebHostEnvironment appEnvironment,
+            IServiceProvider serviceProvider)
         {
             _smsService = smsService;
             _emailService = emailService;
             _appEnvironment = appEnvironment;
+            _serviceProvider = serviceProvider;
         }
 
-        public IActionResult Index()
+        public IActionResult Index(int id = 0)
         {
             var result = _smsService.Send(new SmsModel()
             {
@@ -30,25 +36,42 @@ namespace Mvc101.Controllers
             var wissenSms = (WissenSmsService)_smsService;
             Debug.WriteLine(wissenSms.EndPoint);
 
-            var fileStream = new FileStream(@$"{_appEnvironment.WebRootPath}\Files\Jimg.jpg", FileMode.Open);
+            #region Factory Design Pattern Uygulaması
 
-            _emailService.SendMailAsync(new MailModel()
+            IEmailService emailService;
+            if (id % 2 == 0)
+            {
+                emailService = _serviceProvider.GetService<SendGridEmailService>();
+
+            }
+            else
+            {
+                emailService = _serviceProvider.GetService<OutlookEmailService>();
+            }
+
+            #endregion
+
+
+            //var fileStream = new FileStream(@$"{_appEnvironment.WebRootPath}\files\portre.jpeg", FileMode.Open);
+
+            emailService.SendMailAsync(new MailModel()
             {
                 To = new List<EmailModel>()
                 {
                     new EmailModel()
                     {
                         Name = "Wissen",
-                        Adress = "dogukansvnc13@gmail.com"
+                        Adress = "site@wissenakademie.com"
                     }
-                },  
+                },
                 Subject = "Index Açıldı",
                 Body = "Bu emailin body kısmıdır",
-                Attachs = new List<Stream>()
-                {
-                    fileStream
-                }
+                //Attachs = new List<Stream>()
+                //{
+                //    fileStream
+                //}
             });
+            //fileStream.Close();
 
             return View();
         }
