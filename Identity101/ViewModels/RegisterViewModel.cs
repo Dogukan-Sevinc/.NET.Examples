@@ -16,7 +16,7 @@ namespace Identity101.ViewModels
         [Required(ErrorMessage = "Soyad alanı gereklidir.")]
         [Display(Name = "Soyad")]
         [StringLength(50)]
-        public string SurName { get; set; }
+        public string Surname { get; set; }
         
         [Required(ErrorMessage = "E-posta alanı gereklidir.")]
         [Display(Name = "Email")]

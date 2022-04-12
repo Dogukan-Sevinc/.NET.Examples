@@ -57,3 +57,4 @@ public class OutlookEmailService : IEmailService
         };
         return smtpClient.SendMailAsync(mail);
     }
+}

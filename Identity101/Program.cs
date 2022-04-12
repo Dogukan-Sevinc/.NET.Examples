@@ -2,6 +2,7 @@ using Identity101.Data;
 using Identity101.Models.Identity;
 using Identity101.Services;
 using Identity101.Services.EmailService;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -29,7 +30,8 @@ builder.Services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
     options.User.AllowedUserNameCharacters =
         "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._";
     options.User.RequireUniqueEmail = true;
-}).AddEntityFrameworkStores<MyContext>();
+}).AddEntityFrameworkStores<MyContext>()
+    .AddDefaultTokenProviders(); ;
 
 builder.Services.ConfigureApplicationCookie(options =>
 {
