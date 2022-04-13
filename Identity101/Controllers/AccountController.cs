@@ -259,5 +259,21 @@ namespace Identity101.Controllers
             TempData["Message"] = message;
             return View();
         }
+
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> Profile()
+        {
+            var user = await _userManager.FindByNameAsync(HttpContext.User.Identity!.Name);
+
+            var model = new UserProfileViewModel()
+            {
+                Email = user.Email,
+                Name = user.Name,
+                Surname = user.Surname,
+            };
+            return View(model);
+        }
+
     }
 }
