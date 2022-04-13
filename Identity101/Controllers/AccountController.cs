@@ -274,6 +274,34 @@ namespace Identity101.Controllers
             };
             return View(model);
         }
+        [Authorize, HttpPost]
+
+        public async Task<IActionResult> Profile(UserProfileViewModel model)
+        {
+            if (!ModelState.IsValid)
+                return View(model);
+            var user = await _userManager.FindByNameAsync(HttpContext.User.Identity!.Name);
+            user.Name = model.Name;
+            user.Surname = model.Surname;
+            user.Email = model.Email;
+
+            //TODO:eğer email değiştiyse.kullanıcının rolünü pasife çekip tekrar aktivasyon gönderilmelidir
+            var result = await _userManager.UpdateAsync(user);
+            if (result.Succeeded)
+            {
+                ViewBag.Message = "Güncelleme başarılı";
+            }
+
+            else
+            {
+                var message = string.Join("<br>", result.Errors.Select(x => x.Description));
+                ViewBag.Message = message;
+            }
+            return View(model);
+
+        }
 
     }
+
+
 }
