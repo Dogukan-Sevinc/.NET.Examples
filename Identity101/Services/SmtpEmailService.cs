@@ -1,19 +1,25 @@
 ﻿using Identity101.Models;
+using Identity101.Models.Configuration;
 using Identity101.Services.EmailService;
 using System.Net;
 using System.Net.Mail;
 using System.Text;
+namespace Identity101.Services.Email;
 
-public class OutlookEmailService : IEmailService
+public class SmtpEmailService : IEmailService
 {
-    public string SenderMail => "blacbod@hotmail.com";
-    public string Password => "burak.61";
-    public string Smtp => "smtp-mail.outlook.com";
-    public int SmtpPort => 587;
+    private readonly IConfiguration _configuration;
+
+    public SmtpEmailService(IConfiguration configuration)
+    {
+        _configuration = configuration;
+        this.EmailSettings = _configuration.GetSection("GmailSettings").Get<EmailSettings>();
+    }
+    public EmailSettings EmailSettings { get; }
 
     public Task SendMailAsync(MailModel model)
     {
-        var mail = new MailMessage { From = new MailAddress(this.SenderMail) };
+        var mail = new MailMessage { From = new MailAddress(this.EmailSettings.SenderMail) };
 
         foreach (var c in model.To)
         {
@@ -24,6 +30,7 @@ public class OutlookEmailService : IEmailService
         {
             mail.CC.Add(new MailAddress(cc.Adress, cc.Name));
         }
+
         foreach (var cc in model.Bcc)
         {
             mail.Bcc.Add(new MailAddress(cc.Adress, cc.Name));
@@ -50,9 +57,9 @@ public class OutlookEmailService : IEmailService
 
         ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
 
-        var smtpClient = new SmtpClient(this.Smtp, this.SmtpPort)
+        var smtpClient = new SmtpClient(this.EmailSettings.Smtp, this.EmailSettings.SmtpPort)
         {
-            Credentials = new NetworkCredential(this.SenderMail, this.Password),
+            Credentials = new NetworkCredential(this.EmailSettings.SenderMail, this.EmailSettings.Password),
             EnableSsl = true
         };
         return smtpClient.SendMailAsync(mail);

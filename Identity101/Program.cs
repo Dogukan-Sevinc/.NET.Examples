@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
 var con1 = builder.Configuration.GetConnectionString("con1");
 
-builder.Services.AddTransient<IEmailService, OutlookEmailService>();
+builder.Services.AddTransient<IEmailService, SmtpEmailService>();
 builder.Services.AddDbContext<MyContext>(options => options.UseSqlServer(con1));
 
 builder.Services.AddIdentity<ApplicationUser, ApplicationRole>(options =>

@@ -3,6 +3,7 @@ using System.Text.Encodings.Web;
 using Identity101.Models;
 using Identity101.Models.Identity;
 using Identity101.Role;
+using Identity101.Services.Email;
 using Identity101.Services.EmailService;
 using Identity101.ViewModels;
 using Microsoft.AspNetCore.Authorization;
@@ -167,14 +168,43 @@ public class AccountController : Controller
 
     [Authorize]
     public async Task<IActionResult> Logout()
-        {
+    {
         await _signInManager.SignOutAsync();
         return RedirectToAction("Index", "Home");
-
     }
-
-    public  IActionResult AccessDenied()
+    public IActionResult AccesDenied()
     {
         return View();
     }
+    [HttpGet]
+    public IActionResult ResetPaswwrod()
+    {
+        return View();
+    }
+    [HttpPost]
+    public async Task<IActionResult> ResetPassword(string email)
+    {
+        var user = await _userManager.FindByEmailAsync(email);
+        if (user == null)
+        {
+            ViewBag.Message = "Mailinize şifre güncelleme yönergemiz gönderilmiştir";
+        }
+        else
+        {
+            var code = await _userManager.GeneratePasswordResetTokenAsync(user);
+            code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
+            var callbackUrl = Url.Action("ConfirmResetPassword", controller: "Account", values: new
+            {
+                userId = user.Id,
+                code = code
+            },
+                protocol: Request.Scheme);
+
+            ViewBag.Message = "Mailinize şifre güncelleme yönergemiz gönderilmiştir";
+
+
+        }
+        return View();
+    }
+
 }
