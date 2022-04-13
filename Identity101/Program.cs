@@ -1,6 +1,6 @@
 using Identity101.Data;
 using Identity101.Models.Identity;
-using Identity101.Services;
+using Identity101.Services.Email;
 using Identity101.Services.EmailService;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
