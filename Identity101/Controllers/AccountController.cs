@@ -285,7 +285,7 @@ namespace Identity101.Controllers
             user.Surname = model.Surname;
             user.Email = model.Email;
 
-            //TODO:eğer email değiştiyse.kullanıcının rolünü pasife çekip tekrar aktivasyon gönderilmelidir
+            //TODO: eğer email değiştiyse.kullanıcının rolünü pasife çekip tekrar aktivasyon gönderilmelidir
             var result = await _userManager.UpdateAsync(user);
             if (result.Succeeded)
             {
@@ -299,6 +299,31 @@ namespace Identity101.Controllers
             }
             return View(model);
 
+        }
+
+        [HttpGet]
+        public IActionResult ChangePassword()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
+        {
+            var name = HttpContext.User.Identity.Name;
+            var user = await _userManager.FindByNameAsync(name);
+            var result = await _userManager.ChangePasswordAsync(user, model.CurrentPassword, model.NewPassword);
+
+            if (result.Succeeded)
+            {
+                ViewBag.Message = "Güncelleme başarılı";
+            }
+            else
+            {
+                var message = string.Join("<br>", result.Errors.Select(x => x.Description));
+                ViewBag.Message = message;
+            }
+            return View(model);
         }
 
     }
