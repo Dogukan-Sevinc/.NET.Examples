@@ -1,4 +1,5 @@
 ﻿using Identity101.Models;
+using Identity101.Models.Email;
 using Identity101.Models.Identity;
 using Identity101.Role;
 using Identity101.Services.EmailService;

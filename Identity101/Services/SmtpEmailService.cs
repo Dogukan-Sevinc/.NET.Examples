@@ -1,9 +1,10 @@
-﻿using Identity101.Models;
-using Identity101.Models.Configuration;
+﻿using Identity101.Models.Configuration;
+using Identity101.Models.Email;
 using Identity101.Services.EmailService;
 using System.Net;
 using System.Net.Mail;
 using System.Text;
+
 namespace Identity101.Services.Email;
 
 public class SmtpEmailService : IEmailService
