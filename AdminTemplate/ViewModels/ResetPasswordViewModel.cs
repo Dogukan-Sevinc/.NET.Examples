@@ -1,5 +1,4 @@
-﻿
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace AdminTemplate.ViewModels
 {
@@ -17,5 +16,6 @@ namespace AdminTemplate.ViewModels
         public string ConfirmNewPassword { get; set; }
         public string Code { get; set; }
         public string UserId { get; set; }
+       
     }
 }
