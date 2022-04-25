@@ -19,10 +19,6 @@
 	  <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.2" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="ViewModels\Dashboard\" />
-  </ItemGroup>
-
   <ProjectExtensions><VisualStudio><UserProperties appsettings_1json__JsonSchema="https://json.schemastore.org/asmdef.json" /></VisualStudio></ProjectExtensions>
 
 </Project>

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace AdminTemplate.Data;
 
-public class MyContext : IdentityDbContext<ApplicationUser, ApplicationRole, string>
+public sealed class MyContext : IdentityDbContext<ApplicationUser, ApplicationRole, string>
 {
     public MyContext(DbContextOptions options)
         : base(options)

@@ -30,7 +30,6 @@ public class AccountController : Controller
         CheckRoles();
     }
 
-
     private void CheckRoles()
     {
         foreach (string item in Roles.RoleList)
@@ -106,7 +105,6 @@ public class AccountController : Controller
 
     public async Task<IActionResult> ConfirmEmail(string userId, string code)
     {
-
         if (userId == null || code == null)
         {
             return RedirectToAction("Index", "Home");
@@ -117,15 +115,9 @@ public class AccountController : Controller
 
         code = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(code));
         var result = await _userManager.ConfirmEmailAsync(user, code);
-
-        if (result.Succeeded)
-        {
-            ViewBag.Success = "Thank you for confirming your email";
-        }
-        else
-        {
-            ViewBag.Fail = "Error confirming your email";
-        }
+        ViewBag.StatusMessage = result.Succeeded
+            ? "Thank you for confirming your email"
+            : "Error confirming your email.";
 
         if (!result.Succeeded || !_userManager.IsInRoleAsync(user, Roles.Passive).Result) return View();
 
@@ -150,20 +142,17 @@ public class AccountController : Controller
             return View(model);
         }
 
-        var user = await _userManager.FindByNameAsync(model.UserName);
-
-        if (user == null)
-        {
-            ModelState.AddModelError(string.Empty, "User not found");
-            return View(model);
-        }
-
-        var result = await _signInManager.PasswordSignInAsync(user, model.Password, model.RememberMe, true);
+        var result = await _signInManager.PasswordSignInAsync(model.UserName, model.Password, model.RememberMe, true);
 
         if (result.Succeeded)
         {
-
-            HttpContext.Session.SetString("User", System.Text.Json.JsonSerializer.Serialize<ApplicationUser>(user));
+            var user = _userManager.FindByNameAsync(model.UserName).Result;
+            HttpContext.Session.SetString("User", System.Text.Json.JsonSerializer.Serialize(new
+            {
+                user.Name,
+                user.Surname,
+                user.Email
+            }));
 
             return RedirectToAction("Profile", "Account");
         }
@@ -223,7 +212,7 @@ public class AccountController : Controller
             await _emailService.SendMailAsync(emailMessage);
         }
 
-        ViewBag.Message = "Password changing steps sent to your email if you're a valid used";
+        ViewBag.Message = "Eğer mail adresiniz doğru ise şifre güncelleme yönergemiz gönderilmiştir";
         return View();
     }
 
@@ -232,15 +221,12 @@ public class AccountController : Controller
     {
         if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(code))
         {
-            return BadRequest("Bad Request");
+            return BadRequest("Hatalı istek");
         }
 
-        var model = new ResetPasswordViewModel()
-        {
-            Code = code,
-            UserId = userId
-        };
-        return View(model);
+        ViewBag.Code = code;
+        ViewBag.UserId = userId;
+        return View();
     }
 
     [HttpPost]
@@ -254,7 +240,7 @@ public class AccountController : Controller
         var user = await _userManager.FindByIdAsync(model.UserId);
         if (user == null)
         {
-            ModelState.AddModelError(string.Empty, "User Not Found");
+            ModelState.AddModelError(string.Empty, "Kullanıcı bulunamadı");
             return View(model);
         }
 
@@ -275,7 +261,7 @@ public class AccountController : Controller
                 Subject = "Your password changed successfully"
             };
             await _emailService.SendMailAsync(emailMessage);
-            TempData["Message"] = "You changed your password successfully";
+            TempData["Message"] = "Şifre değişikliğiniz gerçekleştirilmiştir";
             return RedirectToAction("Login");
         }
 
@@ -355,7 +341,7 @@ public class AccountController : Controller
         user.Name = model.UserProfileVM.Name;
         user.Surname = model.UserProfileVM.Surname;
         user.Email = model.UserProfileVM.Email;
-        user.UserName = model.UserProfileVM.UserName;
+        //user.UserName = model.UserProfileVM.UserName;
 
         var result = await _userManager.UpdateAsync(user);
         if (result.Succeeded)
@@ -363,7 +349,12 @@ public class AccountController : Controller
             ViewBag.Message = "Your profile has been updated successfully";
             var userl = await _userManager.FindByNameAsync(user.UserName);
             await _signInManager.SignInAsync(userl, true);
-            HttpContext.Session.SetString("User", System.Text.Json.JsonSerializer.Serialize<ApplicationUser>(user));
+            HttpContext.Session.SetString("User", System.Text.Json.JsonSerializer.Serialize(new
+            {
+                user.Name,
+                user.Surname,
+                user.Email
+            }));
         }
         else
         {
@@ -373,7 +364,6 @@ public class AccountController : Controller
 
         return View(model);
     }
-
 
 
     [HttpPost, Authorize]
