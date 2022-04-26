@@ -50,13 +50,6 @@ public class AccountController : Controller
     [HttpGet]
     public IActionResult Register()
     {
-        string asd = "(asd)asdsa((asdas)))";
-        
-        foreach (var item in asd)
-        {
-            
-        }
-
         return View();
     }
 
@@ -113,7 +106,6 @@ public class AccountController : Controller
 
     public async Task<IActionResult> ConfirmEmail(string userId, string code)
     {
-
         if (userId == null || code == null)
         {
             return RedirectToAction("Index", "Home");
@@ -124,15 +116,9 @@ public class AccountController : Controller
 
         code = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(code));
         var result = await _userManager.ConfirmEmailAsync(user, code);
-
-        if (result.Succeeded)
-        {
-            ViewBag.Success = "Thank you for confirming your email";
-        }
-        else
-        {
-            ViewBag.Fail = "Error confirming your email";
-        }
+        ViewBag.StatusMessage = result.Succeeded
+            ? "Thank you for confirming your email"
+            : "Error confirming your email.";
 
         if (!result.Succeeded || !_userManager.IsInRoleAsync(user, Roles.Passive).Result) return View();
 
@@ -169,7 +155,6 @@ public class AccountController : Controller
 
         if (result.Succeeded)
         {
-
             HttpContext.Session.SetString("User", System.Text.Json.JsonSerializer.Serialize<ApplicationUser>(user));
 
             return RedirectToAction("Profile", "Account");
@@ -230,7 +215,7 @@ public class AccountController : Controller
             await _emailService.SendMailAsync(emailMessage);
         }
 
-        ViewBag.Message = "Password changing steps sent to your email if you're a valid used";
+        ViewBag.Message = "Eğer mail adresiniz doğru ise şifre güncelleme yönergemiz gönderilmiştir";
         return View();
     }
 
@@ -239,15 +224,12 @@ public class AccountController : Controller
     {
         if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(code))
         {
-            return BadRequest("Bad Request");
+            return BadRequest("Hatalı istek");
         }
 
-        var model = new ResetPasswordViewModel()
-        {
-            Code = code,
-            UserId = userId
-        };
-        return View(model);
+        ViewBag.Code = code;
+        ViewBag.UserId = userId;
+        return View();
     }
 
     [HttpPost]
@@ -261,7 +243,7 @@ public class AccountController : Controller
         var user = await _userManager.FindByIdAsync(model.UserId);
         if (user == null)
         {
-            ModelState.AddModelError(string.Empty, "User Not Found");
+            ModelState.AddModelError(string.Empty, "Kullanıcı bulunamadı");
             return View(model);
         }
 
@@ -282,7 +264,7 @@ public class AccountController : Controller
                 Subject = "Your password changed successfully"
             };
             await _emailService.SendMailAsync(emailMessage);
-            TempData["Message"] = "You changed your password successfully";
+            TempData["Message"] = "Şifre değişikliğiniz gerçekleştirilmiştir";
             return RedirectToAction("Login");
         }
 
@@ -382,7 +364,6 @@ public class AccountController : Controller
     }
 
 
-
     [HttpPost, Authorize]
     public async Task<IActionResult> ChangePassword(UpdateProfilePasswordViewModel model)
     {
@@ -410,4 +391,3 @@ public class AccountController : Controller
         return RedirectToAction(nameof(Profile));
     }
 }
-
