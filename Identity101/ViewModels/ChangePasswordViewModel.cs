@@ -5,7 +5,7 @@ namespace Identity101.ViewModels;
 public class ChangePasswordViewModel
 {
     [Required(ErrorMessage = "Mevcut şifre alanı gereklidir.")]
-    [DataType(DataType.Password)] //Şifreli alan olduğunu belirtiyor ve yıldızlıyor.
+    [DataType(DataType.Password)]
     [Display(Name = "Mevcut Şifre")]
     public string CurrentPassword { get; set; }
 

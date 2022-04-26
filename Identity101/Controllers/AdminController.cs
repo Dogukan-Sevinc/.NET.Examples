@@ -1,15 +1,13 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Identity101.Controllers
+namespace Identity101.Controllers;
+
+[Authorize(Roles = "Admin")]
+public class AdminController : Controller
 {
-    [Authorize(Roles="Admin")]
-    public class AdminController : Controller
+    public IActionResult Index()
     {
-        
-        public IActionResult Index()
-        {
-            return View();
-        }
+        return View();
     }
 }

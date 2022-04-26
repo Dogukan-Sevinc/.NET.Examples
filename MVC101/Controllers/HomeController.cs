@@ -1,11 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MVC101.Models;
 using System.Diagnostics;
-using Mvc101.Services.EmailService;
-using MVC101.Services.SmsService;
 using MVC101.Services.EmailService;
+using MVC101.Services.SmsService;
 
-namespace Mvc101.Controllers
+namespace MVC101.Controllers
 {
     public class HomeController : Controller
     {
@@ -14,10 +13,7 @@ namespace Mvc101.Controllers
         private readonly IWebHostEnvironment _appEnvironment;
         private readonly IServiceProvider _serviceProvider;
 
-        public HomeController(ISmsService smsService,
-            IEmailService emailService,
-            IWebHostEnvironment appEnvironment,
-            IServiceProvider serviceProvider)
+        public HomeController(ISmsService smsService, IEmailService emailService, IWebHostEnvironment appEnvironment, IServiceProvider serviceProvider)
         {
             _smsService = smsService;
             _emailService = emailService;
@@ -25,7 +21,12 @@ namespace Mvc101.Controllers
             _serviceProvider = serviceProvider;
         }
 
-        public IActionResult Index(int id = 0)
+        public IServiceProvider Get_serviceProvider()
+        {
+            return _serviceProvider;
+        }
+
+        public IActionResult Index(IServiceProvider _serviceProvider, int id = 0)
         {
             var result = _smsService.Send(new SmsModel()
             {
@@ -33,16 +34,16 @@ namespace Mvc101.Controllers
                 Mesaj = "home/index çalıştı"
             });
 
-            var wissenSms = (WissenSmsService)_smsService;
-            Debug.WriteLine(wissenSms.EndPoint);
+            var fileStream = new FileStream($"{_appEnvironment.WebRootPath}\\files\\aa.zip", FileMode.Open);
 
-            #region Factory Design Pattern Uygulaması
+
+
+            #region Factory Design Pattern
 
             IEmailService emailService;
-            if (id % 2 == 0)
+            if (id %2 == 0)
             {
                 emailService = _serviceProvider.GetService<SendGridEmailService>();
-
             }
             else
             {
@@ -52,38 +53,31 @@ namespace Mvc101.Controllers
             #endregion
 
 
-            //var fileStream = new FileStream(@$"{_appEnvironment.WebRootPath}\files\portre.jpeg", FileMode.Open);
-
             emailService.SendMailAsync(new MailModel()
             {
                 To = new List<EmailModel>()
                 {
                     new EmailModel()
                     {
-                        Name = "Wissen",
-                        Adress = "site@wissenakademie.com"
+                        Name ="Wissen",
+                        Adress = "akcaymert603@gmail.com"
                     }
                 },
-                Subject = "Index Açıldı",
-                Body = "Bu emailin body kısmıdır",
-                //Attachs = new List<Stream>()
-                //{
-                //    fileStream
-                //}
+                Subject = "Logged in....",
+                Body = "🚀 Successful login 🚀 ",
+                Attachs = new List<Stream>()
+                {
+                    fileStream
+                }
             });
-            //fileStream.Close();
+
+            fileStream.Close();
 
             return View();
         }
 
         public IActionResult Privacy()
         {
-            var result = _smsService.Send(new SmsModel()
-            {
-                TelefonNo = "12345",
-                Mesaj = "home/index çalıştı"
-            });
-
             return View();
         }
 
