@@ -20,7 +20,10 @@ var showPosition = (position) => {
         center: pos,
         zoom: 18,
         mapTypeId: "terrain",
+        mapTypeControl: false
     });
+
+    }
 
     var marker = new google.maps.Marker({
         position: pos,
