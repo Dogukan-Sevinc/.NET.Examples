@@ -23,7 +23,7 @@ var showPosition = (position) => {
     const card = document.getElementById("pac-card");
     const input = document.getElementById("pac-input");
     const options = {
-        fields: ["formatted_address", "geometry", "name"],
+        fields: ["formatted_address", "geometry", "name", "place_id"],
         strictBounds: false,
         types: ["establishment"],
     };
@@ -47,10 +47,10 @@ var showPosition = (position) => {
         infowindow.close();
         marker.setVisible(false);
 
-        const place = autocomplete.getPlace();
+        place = autocomplete.getPlace();
         console.log(place);
         if (!place.geometry || !place.geometry.location) {
-            window.alert("No details available for input: '" + place.name + "'");
+            alert("No details available for input: '" + place.name + "'");
             return;
         }
 
@@ -70,3 +70,42 @@ var showPosition = (position) => {
         infowindow.open(map, marker);
     });
 }
+const addPlace = () => {
+    if (place != null) {
+        var venue = {
+            name: place.name,
+            id: place.place_id,
+        };
+
+        if (checkPlaces(venue)) {
+            place = null;
+            return;
+        }
+
+        places.push(venue);
+
+        console.log(places);
+        const placeList = document.getElementById("place-list");
+        const placeItem = document.createElement("li");
+        placeList.classList.add("list-group");
+        placeList.classList.add("list-group-flush");
+        placeItem.classList.add("list-group-item");
+        placeItem.innerHTML = `${place.name}`;
+        placeList.appendChild(placeItem);
+        place = null;
+    }
+}
+
+const checkPlaces = (venue) => {
+    console.log([places, venue]);
+    for (let i = 0; i < places.length; i++) {
+        const item = places[i];
+        if (item.id === venue.id) {
+            return true;
+        }
+    }
+    return false;
+};
+
+let place = null;
+let places = [];
