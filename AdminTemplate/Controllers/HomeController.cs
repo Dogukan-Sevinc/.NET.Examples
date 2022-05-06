@@ -27,7 +27,6 @@ public class HomeController : Controller
         };
         return View(model);
     }
-
     [HttpGet, Authorize]
     public IActionResult Category()
     {

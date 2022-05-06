@@ -1,4 +1,5 @@
 ﻿using AdminTemplate.Data;
+using AdminTemplate.Models.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -34,5 +35,24 @@ namespace AdminTemplate.Controllers.Api
             }
         }
 
+        [HttpPost]
+        public IActionResult Add(Category model)
+        {
+            try
+            {
+                model.CreatedUser = HttpContext.User.Identity!.Name;
+                _context.Categories.Add(model);
+                _context.SaveChanges();
+                return Ok(new
+                {
+                    Success = true,
+                    Message = $"{model.CategoryName} isimli kategori başarıyla eklendi"
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = $"Bir hata oluştu: {ex.Message}" });
+            }
+        }
     }
 }
