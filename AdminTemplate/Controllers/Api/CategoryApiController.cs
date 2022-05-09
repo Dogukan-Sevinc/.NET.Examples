@@ -3,7 +3,7 @@ using AdminTemplate.Models.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace AdminTemplate.Controllers.Api
+namespace AdminTemplate.Controllers.Apis
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
@@ -46,7 +46,7 @@ namespace AdminTemplate.Controllers.Api
                 return Ok(new
                 {
                     Success = true,
-                    Message = $"{model.CategoryName} isimli kategori başarıyla eklendi"
+                    Message = $"{model.Name} isimli kategori başarıyla eklendi"
                 });
             }
             catch (Exception ex)
