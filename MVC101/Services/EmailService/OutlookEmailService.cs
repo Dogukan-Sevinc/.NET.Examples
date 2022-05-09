@@ -1,64 +1,62 @@
-﻿using System.Net;
+﻿using Mvc101.Models;
+using System.Net;
 using System.Net.Mail;
 using System.Text;
-using MVC101.Models;
 
-namespace MVC101.Services.EmailService;
-
-public class OutlookEmailService : IEmailService
+namespace Mvc101.Services.EmailService
 {
-    public string SenderMail => "wissen.academies@outlook.com";
-    public string Password => "123456789123456789abc";
-    public string Smtp => "smtp-mail.outlook.com";
-    public int SmtpPort => 587;
-
-
-    public Task SendMailAsync(MailModel model)
+    public class OutlookEmailService : IEmailService
     {
-        var mail = new MailMessage { From = new MailAddress(this.SenderMail) };
+        public string SenderMail => "wissen.akademie@outlook.com";
+        public string Password => "1-9x2+abc";
+        public string Smtp => "smtp-mail.outlook.com";
+        public int SmtpPort => 587;
 
-        foreach (var c in model.To)
+        public Task SendMailAsync(MailModel model)
         {
-            mail.To.Add(new MailAddress(c.Adress, c.Name));
-        }
+            var mail = new MailMessage { From = new MailAddress(this.SenderMail) };
 
-        foreach (var cc in model.Cc)
-        {
-            mail.CC.Add(new MailAddress(cc.Adress, cc.Name));
-        }
-
-        foreach (var bcc in model.Bcc)
-        {
-            mail.Bcc.Add(new MailAddress(bcc.Adress, bcc.Name));
-        }
-
-        if (model.Attachs is { Count: > 0 })
-        {
-            foreach (var modelAttach in model.Attachs)
+            foreach (var c in model.To)
             {
-                var fileStream = modelAttach as FileStream;
-                var info = new FileInfo(fileStream.Name);
-                mail.Attachments.Add(new Attachment(fileStream,info.Name));
+                mail.To.Add(new MailAddress(c.Adress, c.Name));
             }
+
+            foreach (var cc in model.Cc)
+            {
+                mail.CC.Add(new MailAddress(cc.Adress, cc.Name));
+            }
+            foreach (var cc in model.Bcc)
+            {
+                mail.Bcc.Add(new MailAddress(cc.Adress, cc.Name));
+            }
+
+            if (model.Attachs is { Count: > 0 })
+            {
+                foreach (var attach in model.Attachs)
+                {
+                    var fileStream = attach as FileStream;
+                    var info = new FileInfo(fileStream.Name);
+
+                    mail.Attachments.Add(new Attachment(attach, info.Name));
+                }
+            }
+
+            mail.IsBodyHtml = true;
+            mail.BodyEncoding = Encoding.UTF8;
+            mail.SubjectEncoding = Encoding.UTF8;
+            mail.HeadersEncoding = Encoding.UTF8;
+
+            mail.Subject = model.Subject;
+            mail.Body = model.Body;
+
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+
+            var smtpClient = new SmtpClient(this.Smtp, this.SmtpPort)
+            {
+                Credentials = new NetworkCredential(this.SenderMail, this.Password),
+                EnableSsl = true
+            };
+            return smtpClient.SendMailAsync(mail);
         }
-
-
-        mail.Subject = model.Subject;
-        mail.Body = model.Body;
-        mail.IsBodyHtml = true;
-        mail.BodyEncoding = Encoding.UTF8;
-        mail.SubjectEncoding = Encoding.UTF8;
-        mail.HeadersEncoding = Encoding.UTF8;
-
-        ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
-
-        var smtpClient = new SmtpClient(this.Smtp, this.SmtpPort)
-        {
-            Credentials = new NetworkCredential(userName: this.SenderMail, this.Password),
-            EnableSsl = true
-        };
-
-        return smtpClient.SendMailAsync(mail);
-
     }
 }

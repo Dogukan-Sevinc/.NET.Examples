@@ -1,4 +1,4 @@
-﻿using AdminTemplate.Data;
+using AdminTemplate.Data;
 using AdminTemplate.ViewModels;
 using AdminTemplate.ViewModels.Dashboard;
 using Microsoft.AspNetCore.Authorization;
@@ -20,9 +20,9 @@ public class HomeController : Controller
         var productReportViewModel = new ProductReportViewModel()
         {
             Count = _context.Products.Count(),
-            Total = _context.Products.Sum(x => x.UnitPrice)
+            Total = _context.Products.Sum(x=>x.UnitPrice)
         };
-
+        
         var model = new DashboardViewModels()
         {
             ProductReportViewModel = productReportViewModel

@@ -1,4 +1,4 @@
-﻿namespace Identity101.Models.Role;
+namespace Identity101.Models.Role;
 
 public static class Roles
 {
@@ -6,10 +6,8 @@ public static class Roles
     public static readonly string User = "User";
     public static readonly string Passive = "Passive";
 
-    public static List<string> RoleList = new()
+    public static List<string> RoleList = new List<string>()
     {
-        Admin,
-        User,
-        Passive
+        Admin, User, Passive
     };
 }

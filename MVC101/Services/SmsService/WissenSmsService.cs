@@ -1,13 +1,15 @@
-﻿using MVC101.Models;
-using System.Diagnostics;
+﻿using System.Diagnostics;
+using Mvc101.Models;
 
-namespace MVC101.Services.SmsService;
-
-public class WissenSmsService : ISmsService
+namespace Mvc101.Services.SmsService
 {
-    public SmsStates Send(SmsModel model)
+    public class WissenSmsService : ISmsService
     {
-        Debug.Write($"Wissen : {model.TelefonNo} - {model.Mesaj}");
-        return SmsStates.Sent;
+        public string EndPoint { get; set; } = "https://wissenakademie.com";
+        public SmsStates Send(SmsModel model)
+        {
+            Debug.WriteLine($"Wissen: {model.TelefonNo} - {model.Mesaj}");
+            return SmsStates.Sent;
+        }
     }
 }

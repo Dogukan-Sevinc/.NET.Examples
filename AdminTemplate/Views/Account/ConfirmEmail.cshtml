@@ -5,7 +5,7 @@
 @model LoginViewModel
 @{
     Layout = null;
-    ViewBag.Title = "Confirm Email";
+    ViewBag.Title = "Login";
 }
 
 <!doctype html>
@@ -18,24 +18,10 @@
         <div id="global-loader"></div>
         <div class="page">
             <div class="page-single">
-                <div class="container col-4 d-flex align-items-center" style="height: 80vh!important">
-                    <div class="card">
-                        <div class="card-body">
-                            @if (ViewBag.Success != null)
-                            {
-                                <h4 class="text-success">
-                                    @ViewBag.Success
-                                </h4>
-                            }else if (ViewBag.Fail != null)
-                            {
-                                <h4 class="text-danger">
-                                    @ViewBag.Fail
-                                </h4>
-                            }
-                            
-                            <div>
-                                <a class="text-azure" asp-controller="Home" asp-action="Index">Click</a> for returning to the main page
-                            </div>
+                <div class="container">
+                    <div class="row authentication">
+                        <div class="col col-login mx-auto">
+                            Hesap onaylama başarılı.
                         </div>
                     </div>
                 </div>

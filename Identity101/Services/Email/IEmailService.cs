@@ -1,4 +1,4 @@
-﻿using Identity101.Models.Email;
+using Identity101.Models.Email;
 
 namespace Identity101.Services.Email;
 

@@ -1,4 +1,4 @@
-﻿namespace MVC101.Models;
+﻿namespace Mvc101.Models;
 
 public class MailModel
 {

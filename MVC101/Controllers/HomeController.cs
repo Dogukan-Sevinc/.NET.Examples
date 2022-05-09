@@ -1,10 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using MVC101.Models;
+using Mvc101.Models;
+using Mvc101.Services.SmsService;
 using System.Diagnostics;
-using MVC101.Services.EmailService;
-using MVC101.Services.SmsService;
+using Mvc101.Services.EmailService;
 
-namespace MVC101.Controllers
+namespace Mvc101.Controllers
 {
     public class HomeController : Controller
     {
@@ -13,7 +13,10 @@ namespace MVC101.Controllers
         private readonly IWebHostEnvironment _appEnvironment;
         private readonly IServiceProvider _serviceProvider;
 
-        public HomeController(ISmsService smsService, IEmailService emailService, IWebHostEnvironment appEnvironment, IServiceProvider serviceProvider)
+        public HomeController(ISmsService smsService,
+            IEmailService emailService,
+            IWebHostEnvironment appEnvironment,
+            IServiceProvider serviceProvider)
         {
             _smsService = smsService;
             _emailService = emailService;
@@ -21,12 +24,7 @@ namespace MVC101.Controllers
             _serviceProvider = serviceProvider;
         }
 
-        public IServiceProvider Get_serviceProvider()
-        {
-            return _serviceProvider;
-        }
-
-        public IActionResult Index(IServiceProvider _serviceProvider, int id = 0)
+        public IActionResult Index(int id = 0)
         {
             var result = _smsService.Send(new SmsModel()
             {
@@ -34,14 +32,13 @@ namespace MVC101.Controllers
                 Mesaj = "home/index çalıştı"
             });
 
-            var fileStream = new FileStream($"{_appEnvironment.WebRootPath}\\files\\aa.zip", FileMode.Open);
+            var wissenSms = (WissenSmsService)_smsService;
+            Debug.WriteLine(wissenSms.EndPoint);
 
-
-
-            #region Factory Design Pattern
+            #region Factory Design Pattern Uygulaması
 
             IEmailService emailService;
-            if (id %2 == 0)
+            if (id % 2 == 0)
             {
                 emailService = _serviceProvider.GetService<SendGridEmailService>();
             }
@@ -51,7 +48,8 @@ namespace MVC101.Controllers
             }
 
             #endregion
-
+            
+            //var fileStream = new FileStream(@$"{_appEnvironment.WebRootPath}\files\portre.jpeg", FileMode.Open);
 
             emailService.SendMailAsync(new MailModel()
             {
@@ -59,25 +57,34 @@ namespace MVC101.Controllers
                 {
                     new EmailModel()
                     {
-                        Name ="Wissen",
-                        Adress = "akcaymert603@gmail.com"
+                        Name = "Wissen",
+                        Adress = "site@wissenakademie.com"
                     }
                 },
-                Subject = "Logged in....",
-                Body = "🚀 Successful login 🚀 ",
-                Attachs = new List<Stream>()
-                {
-                    fileStream
-                }
+                Subject = "Index Açıldı",
+                Body = "Bu emailin body kısmıdır",
+                //Attachs = new List<Stream>()
+                //{
+                //    fileStream
+                //}
             });
+            //fileStream.Close();
 
-            fileStream.Close();
-
+            List<MailModel> model = new List<MailModel>();
+            Func<MailModel, string> exp = x => x.Body.ToUpper();
+            
+            var upper = model.Select(exp);
             return View();
         }
 
         public IActionResult Privacy()
         {
+            var result = _smsService.Send(new SmsModel()
+            {
+                TelefonNo = "12345",
+                Mesaj = "home/index çalıştı"
+            });
+
             return View();
         }
 

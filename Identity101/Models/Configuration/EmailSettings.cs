@@ -1,4 +1,4 @@
-﻿namespace Identity101.Models.Configuration;
+namespace Identity101.Models.Configuration;
 
 public class EmailSettings
 {

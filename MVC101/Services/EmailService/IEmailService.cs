@@ -1,8 +1,9 @@
-﻿using MVC101.Models;
+﻿using Mvc101.Models;
 
-namespace MVC101.Services.EmailService;
-
-public interface IEmailService
+namespace Mvc101.Services.EmailService
 {
-    Task SendMailAsync(MailModel model);
+    public interface IEmailService
+    {
+        Task SendMailAsync(MailModel model);
+    }
 }

@@ -1,13 +1,14 @@
 ﻿using System.Diagnostics;
-using MVC101.Models;
+using Mvc101.Models;
 
-namespace MVC101.Services.SmsService;
-
-public class SonicSmsService : ISmsService
+namespace Mvc101.Services.SmsService
 {
-    public SmsStates Send(SmsModel model)
+    public class SonicSmsService : ISmsService
     {
-        Debug.Write($"Sonic : {model.TelefonNo} - {model.Mesaj}");
-        return SmsStates.Sent;
+        public SmsStates Send(SmsModel model)
+        {
+            Debug.WriteLine($"Sonic: {model.TelefonNo} - {model.Mesaj}");
+            return SmsStates.Sent;
+        }
     }
 }

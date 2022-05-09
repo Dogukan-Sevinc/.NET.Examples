@@ -1,9 +1,9 @@
-﻿using MVC101.Models;
+﻿using Mvc101.Models;
 
-namespace MVC101.Services.SmsService;
-
-public interface ISmsService
+namespace Mvc101.Services.SmsService
 {
-    SmsStates Send(SmsModel model);
-
+    public interface ISmsService
+    {
+        SmsStates Send(SmsModel model);
+    }
 }

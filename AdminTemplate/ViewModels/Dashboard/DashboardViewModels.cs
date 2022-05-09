@@ -1,6 +1,4 @@
-﻿using AdminTemplate.Controllers;
-
-namespace AdminTemplate.ViewModels.Dashboard
+﻿namespace AdminTemplate.ViewModels.Dashboard
 {
     public class DashboardViewModels
     {

@@ -1,4 +1,4 @@
-﻿namespace Identity101.Models.Email;
+namespace Identity101.Models.Email;
 
 public class MailModel
 {
