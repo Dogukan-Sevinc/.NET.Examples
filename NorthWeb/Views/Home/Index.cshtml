@@ -8,9 +8,146 @@
     <h1 class="display-4">Welcome</h1>
     <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
 </div>
-<ul class="list-group-horizontal">
-    @foreach (var item in Model)
-    {
-        <li class="list-group-item">@item.ProductName - @item.UnitPrice</li>
-    }
-</ul>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-4">
+            <ul class="list-group">
+                @foreach (var item in Model)
+                {
+                    <li class="list-group-item d-flex justify-content-between">
+                        @item.ProductName - @item.UnitPrice
+                        <button class="btn btn-primary add-cart" data-id="@item.ProductId"><i class="fas fa-shopping-cart"></i></button>
+                    </li>
+                }
+            </ul>
+        </div>
+        <div class="col-md-8">
+            <div id="cart">
+                <div class="row">
+                    <div class="col-4">${data.productName}</div>
+                    <div class="col-4">
+                        <input type="button" class="btn btn-info btn-sm decrease" data-id="21" value="-"/> 
+                        ${data.count} x
+                        <input type="button" class="btn btn-info btn-sm ascent" data-id="21" value="+"/> 
+                    </div>
+                    <div class="col-4">${data.count * data.unitPrice}</div>
+                </div>
+                <div class="text-black-50" id="total">Sepet Tutarı: 0 ₺</div>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <script>
+        let cart = [];
+        $(() => {
+            //$(".add-cart").on("click",
+            //    (e) => {
+
+            //        console.log($(e.target));
+            //    });
+
+            $(".add-cart").on("click",
+                function() {
+                    let id = $(this).attr("data-id");
+                    $.ajax({
+                        url: "../../api/productapi/get/" + id,
+                        method: "GET"
+                    }).done((response) => {
+                        console.log(response);
+                        addToCart(response);
+                        console.log(cart);
+                    }).fail((response) => {
+                        console.log(response);
+                    });
+                });
+        });
+        let addToCart = (product) => {
+            let isExist = false;
+            for (let i = 0; i < cart.length; i++) {
+                let data = cart[i];
+                if (data.productId === product.productId) {
+                    data.count++;
+                    isExist = true;
+                    break;
+                }
+            }
+            if (!isExist) {
+                cart.push({
+                    productName: product.productName,
+                    productId: product.productId,
+                    unitPrice: product.unitPrice,
+                    count: 1
+                });
+            }
+            displayCart();
+        }
+        let displayCart = () => {
+            $("#cart").children().empty();
+            let total = 0;
+            for (let i = 0; i < cart.length; i++) {
+                const data = cart[i];
+                let html = `<div class="col-3">${data.productName}</div>
+                    <div class="col-3">
+                        <input type="button" class="btn btn-info btn-sm decrease" data-id="${data.productId}" value="-"/> 
+                        ${data.count} x
+                        <input type="button" class="btn btn-info btn-sm ascent" data-id="${data.productId}" value="+"/> 
+                    </div>
+                    <div class="col-3">${data.count * data.unitPrice}</div>
+                    <div class="col-3">
+                        <input type="button" value="Sil" class="btn btn-danger removeCart" data-id="${data.productId}" />
+                    </div>`;
+
+                $(html).appendTo($("#cart").children());
+                total += data.count * data.unitPrice;
+            }
+            const desc = document.querySelectorAll(".decrease");
+            for (let i = 0; i < desc.length; i++) {
+                desc[i].addEventListener("click",
+                    function() {
+                        let id = $(desc[i]).attr("data-id");
+                        descCart(id);
+                    });
+            }
+            const asc = document.querySelectorAll(".ascent");
+            for (let i = 0; i < asc.length; i++) {
+                asc[i].addEventListener("click",
+                    function() {
+                        let id = $(asc[i]).attr("data-id");
+                        ascCart(id);
+                    });
+            }
+            const remove = document.querySelectorAll(".removeCart");
+            for (let i = 0; i < remove.length; i++) {
+                remove[i].addEventListener("click",
+                    function() {
+                        let id = $(remove[i]).attr("data-id");
+                        removeFromCart(id);
+                    });
+            }
+            $("#total").html(`Sepet Tutarı: ${total} ₺`);
+        }
+        let removeFromCart = (id) => {
+            let product = cart.filter(x => x.productId == id)[0];
+            let index = cart.indexOf(product);
+            cart.splice(index, 1);
+            displayCart();
+        }
+        let descCart = (id) => {
+            let product = cart.filter(x => x.productId == id)[0];
+            if (product.count > 1) {
+                product.count--;
+            } else {
+                let index = cart.indexOf(product);
+                cart.splice(index, 1);
+            }
+            displayCart();
+        }
+        let ascCart = (id) => {
+            let product = cart.filter(x => x.productId == id)[0];
+            product.count++;
+            displayCart();
+        }
+    </script>
+}
