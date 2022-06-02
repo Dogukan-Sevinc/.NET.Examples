@@ -2,9 +2,9 @@
 using Iyzipay.Model;
 using North.Core.Payments;
 
-namespace North.Business.MapperProfiles
+namespace North.Businesss.MapperProfiles
 {
-    internal class PaymentProfile : Profile
+    public class PaymentProfile : Profile
     {
         public PaymentProfile()
         {

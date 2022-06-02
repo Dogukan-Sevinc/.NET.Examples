@@ -1,10 +1,10 @@
 ﻿using North.Core.Payments;
 
-namespace North.Business.Services.Payment
+namespace North.Businesss.Services.Payment
 {
     public interface IPaymentService
     {
-        InstallmentModel CheckInstallment(string binNumber, decimal price);
+        InstallmentModel CheckInstallments(string binNumber, decimal price);
         PaymentResponseModel Pay(PaymentModel model);
     }
 }

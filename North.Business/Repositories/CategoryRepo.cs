@@ -1,4 +1,4 @@
-﻿using North.Business.Repositories.Abstracts.EntityFrameworkCore;
+﻿using North.Businesss.Repositories.Abstracts.EntityFrameworkCore;
 using North.Core.Entities;
 using North.Data;
 

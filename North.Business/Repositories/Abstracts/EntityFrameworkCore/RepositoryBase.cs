@@ -2,11 +2,11 @@
 using North.Data;
 using System.Linq.Expressions;
 
-namespace North.Business.Repositories.Abstracts.EntityFrameworkCore
+namespace North.Businesss.Repositories.Abstracts.EntityFrameworkCore
 {
     public abstract class RepositoryBase<TEntity, TKey> : IRepository<TEntity, TKey>
-    where TKey : IEquatable<TKey>
-    where TEntity : class
+        where TKey : IEquatable<TKey>
+        where TEntity : class
     {
         protected readonly NorthwindContext _context;
         protected readonly DbSet<TEntity> _table;
@@ -20,7 +20,7 @@ namespace North.Business.Repositories.Abstracts.EntityFrameworkCore
         {
             return predicate == null ? _table : _table.Where(predicate);
         }
-        public virtual TEntity GetById(TKey id)
+        public virtual TEntity? GetById(TKey id)
         {
             return _table.Find(id);
         }
@@ -29,7 +29,7 @@ namespace North.Business.Repositories.Abstracts.EntityFrameworkCore
         {
             _table.Add(entity);
             if (!isSaveLater)
-                return this.Save();
+               return this.Save();
             return 0;
         }
 
@@ -53,6 +53,5 @@ namespace North.Business.Repositories.Abstracts.EntityFrameworkCore
         {
             return _context.SaveChanges();
         }
-
     }
 }
