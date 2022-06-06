@@ -12,7 +12,7 @@ using North.Data;
 namespace North.Data.Migrations
 {
     [DbContext(typeof(NorthwindContext))]
-    [Migration("20220601093736_init")]
+    [Migration("20220606075029_init")]
     partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
